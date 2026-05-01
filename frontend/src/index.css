@@ -1,0 +1,103 @@
+@import "tailwindcss";
+
+/* Quikr Theme - Matching quikr.com brand colors */
+@theme {
+  /* Primary: Quikr Blue #1580C1 — used for links, buttons, icons */
+  --color-primary-50:  #e8f4fc;
+  --color-primary-100: #c5e2f6;
+  --color-primary-200: #9ecef0;
+  --color-primary-300: #6fb8e9;
+  --color-primary-400: #4aa6e4;
+  --color-primary-500: #2595de;
+  --color-primary-600: #1580C1;
+  --color-primary-700: #1169a0;
+  --color-primary-800: #0d5280;
+  --color-primary-900: #083d60;
+
+  /* Accent: Quikr Yellow/Gold — used for "Post Free Ad" CTA */
+  --color-accent-50:  #fffde7;
+  --color-accent-100: #fff9c4;
+  --color-accent-200: #fff59d;
+  --color-accent-300: #fff176;
+  --color-accent-400: #ffee58;
+  --color-accent-500: #ffeb3b;
+  --color-accent-600: #FFC107;
+  --color-accent-700: #FFB300;
+  --color-accent-800: #FF8F00;
+  --color-accent-900: #FF6F00;
+
+  /* Dark nav bar color */
+  --color-nav-dark: #1a1a2e;
+}
+
+/* Disable gradient background utilities */
+@layer utilities {
+  .bg-gradient-to-t,
+  .bg-gradient-to-tr,
+  .bg-gradient-to-r,
+  .bg-gradient-to-br,
+  .bg-gradient-to-b,
+  .bg-gradient-to-bl,
+  .bg-gradient-to-l,
+  .bg-gradient-to-tl {
+    background-image: none !important;
+  }
+}
+
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background-color: #ffffff;
+  color: #111827;
+  /* Ensure base font size is readable without zooming on mobile (Requirement 9.7) */
+  font-size: 16px;
+  line-height: 1.5;
+}
+
+/* Prevent text from being too small on mobile */
+input,
+textarea,
+select,
+button {
+  font-size: 16px; /* Prevents iOS auto-zoom on focus */
+}
+
+@media (min-width: 640px) {
+  input,
+  textarea,
+  select,
+  button {
+    font-size: inherit;
+  }
+}
+
+/* Ensure sufficient line height for readability */
+p, li, dd {
+  line-height: 1.6;
+}
+
+/* Truncate long words to prevent overflow on small screens */
+.break-words {
+  overflow-wrap: break-word;
+  word-break: break-word;
+}
+
+/* Improve tap highlight on mobile for interactive elements */
+a, button, [role="button"] {
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Ensure minimum touch target size for interactive elements (Requirement 9.6) */
+a, button {
+  touch-action: manipulation;
+}
+
+/* Improve text rendering on mobile */
+@media (max-width: 639px) {
+  h1 { font-size: 1.5rem; line-height: 2rem; }
+  h2 { font-size: 1.25rem; line-height: 1.75rem; }
+}
