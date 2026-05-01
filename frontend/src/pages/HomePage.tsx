@@ -1,6 +1,6 @@
 import { useEffect, useState, useRef } from 'react';
 import { useAppDispatch, useAppSelector } from '../store/hooks';
-import { fetchCategories } from '../store/slices/categoriesSlice';
+import { fetchCategories, clearActiveCategory } from '../store/slices/categoriesSlice';
 import { fetchAds } from '../store/slices/adsSlice';
 import { detectCity, setLocation } from '../store/slices/locationSlice';
 import CategoryCard from '../components/CategoryCard';
@@ -28,6 +28,11 @@ const HomePage = () => {
   const [bannerVisible, setBannerVisible] = useState(true);
   const [bannerAdIndex, setBannerAdIndex] = useState(0);
   const bannerTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+
+  // Clear active category when returning to home page
+  useEffect(() => {
+    dispatch(clearActiveCategory());
+  }, [dispatch]);
 
   // Fetch categories on mount
   useEffect(() => {
@@ -108,7 +113,9 @@ const HomePage = () => {
       <div className="flex gap-6">
         {/* Sidebar — leaf categories organized by parent/sub */}
         <div className="hidden lg:block">
-          <Sidebar />
+          <div className="sticky top-20">
+            <Sidebar />
+          </div>
         </div>
 
         {/* Main content */}
@@ -332,11 +339,20 @@ const CategoryAdSections: React.FC<CategoryAdSectionsProps> = ({ ads, tree }) =>
               const location = ad.area && ad.city
                 ? `${ad.area.name}, ${ad.city.name}`
                 : ad.city?.name ?? '';
+              
+              // Build SEO-friendly URL
+              const parentSlug = ad.category?.subCategory?.parent?.slug;
+              const subSlug = ad.category?.subCategory?.slug;
+              const leafSlug = ad.category?.slug;
+              const adUrl = (parentSlug && subSlug && leafSlug)
+                ? `/${parentSlug}/${subSlug}/${leafSlug}/${ad.id}`
+                : `/ads/${ad.id}`;
+              
               return (
                 <button
                   key={ad.id}
                   type="button"
-                  onClick={() => navigate(`/ads/${ad.id}`)}
+                  onClick={() => navigate(adUrl)}
                   className={`relative group text-left focus:outline-none ${
                     idx < sectionAds.length - 1 ? 'border-r border-gray-100' : ''
                   }`}

@@ -28,6 +28,7 @@ export const router = createBrowserRouter([
   { path: '/category/:leafCategoryId', element: wrap(<CategoryPage />) },
   { path: '/:parentCategorySlug/:parentCategoryId', element: wrap(<CategoryPage />) },
   { path: '/:parentCategorySlug/:subCategorySlug/:subCategoryId', element: wrap(<CategoryPage />) },
+  { path: '/:parentCategorySlug/:subCategorySlug/:leafCategorySlug/:adId', element: wrap(<AdDetailsPage />) },
   { path: '/ads/:id', element: wrap(<AdDetailsPage />) },
   { path: '/search', element: wrap(<SearchPage />) },
   {

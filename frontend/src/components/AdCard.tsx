@@ -28,7 +28,19 @@ const AdCard: React.FC<AdCardProps> = ({ ad }) => {
     year: 'numeric',
   });
 
-  const handleClick = () => navigate(`/ads/${ad.id}`);
+  const handleClick = () => {
+    // Build SEO-friendly URL with category hierarchy if available
+    const parentSlug = ad.category?.subCategory?.parent?.slug;
+    const subSlug = ad.category?.subCategory?.slug;
+    const leafSlug = ad.category?.slug;
+    
+    if (parentSlug && subSlug && leafSlug) {
+      navigate(`/${parentSlug}/${subSlug}/${leafSlug}/${ad.id}`);
+    } else {
+      // Fallback to simple URL if category data is incomplete
+      navigate(`/ads/${ad.id}`);
+    }
+  };
 
   return (
     <article

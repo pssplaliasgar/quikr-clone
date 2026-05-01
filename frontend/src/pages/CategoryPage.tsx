@@ -148,6 +148,21 @@ const CategoryPage = () => {
     ? tree.flatMap((p) => p.subCategories).find((s) => s.id === subCategoryId)?.leafCategories ?? []
     : [];
 
+  // When on parent category page, get the sub-categories to display as cards
+  const parentSubCategories = parentCategoryId && !subCategoryId && !leafCategoryId
+    ? parentCategory?.subCategories ?? []
+    : [];
+
+  // Get 4 random ads for parent category view
+  const randomParentAds = parentSubCategories.length > 0 && ads.length > 0
+    ? [...ads].sort(() => Math.random() - 0.5).slice(0, 4)
+    : [];
+
+  // Get 4 random ads for sub-category view
+  const randomSubCategoryAds = subCategoryLeaves.length > 0 && ads.length > 0
+    ? [...ads].sort(() => Math.random() - 0.5).slice(0, 4)
+    : [];
+
   return (
     <div className="max-w-7xl mx-auto px-4 py-6">
       {breadcrumb && (
@@ -197,69 +212,108 @@ const CategoryPage = () => {
       )}
 
       <div className="flex gap-6">
-        <div className="hidden lg:block w-64 flex-shrink-0">
-          <FilterPanel filters={filters} onApply={handleApplyFilters} onClear={handleClearFilters} hideCategoryFilter />
-        </div>
+        {/* Only show filter panel when viewing ads (not category cards) */}
+        {!parentSubCategories.length && !subCategoryLeaves.length && (
+          <div className="hidden lg:block w-64 flex-shrink-0">
+            <FilterPanel filters={filters} onApply={handleApplyFilters} onClear={handleClearFilters} hideCategoryFilter />
+          </div>
+        )}
 
         <div className="flex-1 min-w-0">
-          <div className="flex flex-wrap items-center justify-between gap-3 mb-4">
-            <div className="flex items-center gap-3">
-              <button
-                type="button"
-                onClick={() => setShowFilters((v) => !v)}
-                className="lg:hidden flex items-center gap-1 px-3 py-2 border border-gray-300 rounded-md text-sm text-gray-700 hover:bg-gray-50 transition-colors focus:outline-none focus:ring-2 focus:ring-primary-500"
-                aria-expanded={showFilters}
-              >
-                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2a1 1 0 01-.293.707L13 13.414V19a1 1 0 01-.553.894l-4 2A1 1 0 017 21v-7.586L3.293 6.707A1 1 0 013 6V4z" />
-                </svg>
-                Filters
-              </button>
-              {!loading && (
-                <p className="text-sm text-gray-600">
-                  <span className="font-semibold text-gray-900">{totalAds.toLocaleString('en-IN')}</span>{' '}
-                  {totalAds === 1 ? 'ad' : 'ads'} found
-                </p>
-              )}
-            </div>
-            <div className="flex items-center gap-2">
-              <label htmlFor="sort-select" className="text-sm text-gray-600 whitespace-nowrap">Sort by:</label>
-              <select
-                id="sort-select"
-                value={sortBy}
-                onChange={handleSortChange}
-                className="px-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500 bg-white"
-              >
-                {(Object.keys(SORT_LABELS) as SortOption[]).map((key) => (
-                  <option key={key} value={key}>{SORT_LABELS[key]}</option>
-                ))}
-              </select>
-            </div>
-          </div>
+          {/* Only show filters/sort controls when viewing ads (not category cards) */}
+          {!parentSubCategories.length && !subCategoryLeaves.length && (
+            <>
+              <div className="flex flex-wrap items-center justify-between gap-3 mb-4">
+                <div className="flex items-center gap-3">
+                  <button
+                    type="button"
+                    onClick={() => setShowFilters((v) => !v)}
+                    className="lg:hidden flex items-center gap-1 px-3 py-2 border border-gray-300 rounded-md text-sm text-gray-700 hover:bg-gray-50 transition-colors focus:outline-none focus:ring-2 focus:ring-primary-500"
+                    aria-expanded={showFilters}
+                  >
+                    <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2a1 1 0 01-.293.707L13 13.414V19a1 1 0 01-.553.894l-4 2A1 1 0 017 21v-7.586L3.293 6.707A1 1 0 013 6V4z" />
+                    </svg>
+                    Filters
+                  </button>
+                  {!loading && (
+                    <p className="text-sm text-gray-600">
+                      <span className="font-semibold text-gray-900">{totalAds.toLocaleString('en-IN')}</span>{' '}
+                      {totalAds === 1 ? 'ad' : 'ads'} found
+                    </p>
+                  )}
+                </div>
+                <div className="flex items-center gap-2">
+                  <label htmlFor="sort-select" className="text-sm text-gray-600 whitespace-nowrap">Sort by:</label>
+                  <select
+                    id="sort-select"
+                    value={sortBy}
+                    onChange={handleSortChange}
+                    className="px-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500 bg-white"
+                  >
+                    {(Object.keys(SORT_LABELS) as SortOption[]).map((key) => (
+                      <option key={key} value={key}>{SORT_LABELS[key]}</option>
+                    ))}
+                  </select>
+                </div>
+              </div>
 
-          {showFilters && (
-            <div className="lg:hidden mb-4">
-              <FilterPanel
-                filters={filters}
-                onApply={(f) => { handleApplyFilters(f); setShowFilters(false); }}
-                onClear={() => { handleClearFilters(); setShowFilters(false); }}
-                hideCategoryFilter
-              />
-            </div>
+              {showFilters && (
+                <div className="lg:hidden mb-4">
+                  <FilterPanel
+                    filters={filters}
+                    onApply={(f) => { handleApplyFilters(f); setShowFilters(false); }}
+                    onClear={() => { handleClearFilters(); setShowFilters(false); }}
+                    hideCategoryFilter
+                  />
+                </div>
+              )}
+            </>
           )}
 
           {loading ? (
             <AdGridSkeleton />
+          ) : parentSubCategories.length > 0 ? (
+            /* Parent category view: show sub-category cards + random ads */
+            <>
+              <div className="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-4 gap-4 mb-8">
+                {parentSubCategories.map((sub) => (
+                  <SubCategoryCard
+                    key={sub.id}
+                    sub={sub}
+                    parentSlug={parentCategory?.slug ?? ''}
+                  />
+                ))}
+              </div>
+              {randomParentAds.length > 0 && (
+                <div>
+                  <h2 className="text-lg font-semibold text-gray-900 mb-4">Featured Ads</h2>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
+                    {randomParentAds.map((ad) => <AdCard key={ad.id} ad={ad} />)}
+                  </div>
+                </div>
+              )}
+            </>
           ) : subCategoryId && subCategoryLeaves.length > 0 ? (
-            /* Sub-category view: show leaf category cards */
-            <div className="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-4 gap-4">
-              {subCategoryLeaves.map((leaf) => (
-                <LeafCategoryCard
-                  key={leaf.id}
-                  leaf={leaf}
-                />
-              ))}
-            </div>
+            /* Sub-category view: show leaf category cards + random ads */
+            <>
+              <div className="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-4 gap-4 mb-8">
+                {subCategoryLeaves.map((leaf) => (
+                  <LeafCategoryCard
+                    key={leaf.id}
+                    leaf={leaf}
+                  />
+                ))}
+              </div>
+              {randomSubCategoryAds.length > 0 && (
+                <div>
+                  <h2 className="text-lg font-semibold text-gray-900 mb-4">Featured Ads</h2>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
+                    {randomSubCategoryAds.map((ad) => <AdCard key={ad.id} ad={ad} />)}
+                  </div>
+                </div>
+              )}
+            </>
           ) : ads.length === 0 ? (
             <EmptyState />
           ) : (
@@ -314,7 +368,32 @@ const EmptyState = () => (
 export default CategoryPage;
 
 import { useNavigate } from 'react-router-dom';
-import type { LeafCategory } from '../store/slices/categoriesSlice';
+import type { LeafCategory, SubCategory } from '../store/slices/categoriesSlice';
+
+interface SubCategoryCardProps {
+  sub: SubCategory;
+  parentSlug: string;
+}
+
+const SubCategoryCard: React.FC<SubCategoryCardProps> = ({ sub, parentSlug }) => {
+  const navigate = useNavigate();
+  return (
+    <button
+      type="button"
+      onClick={() => navigate(`/${parentSlug}/${sub.slug}/${sub.id}`)}
+      className="bg-white rounded-lg border border-gray-200 p-5 text-left hover:border-primary-400 hover:shadow-md transition-all focus:outline-none focus:ring-2 focus:ring-primary-500 group"
+    >
+      <div className="flex items-center justify-between">
+        <span className="text-sm font-medium text-gray-800 group-hover:text-primary-600 transition-colors">
+          {sub.name}
+        </span>
+        <svg className="w-4 h-4 text-gray-400 group-hover:text-primary-600 transition-colors flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+        </svg>
+      </div>
+    </button>
+  );
+};
 
 interface LeafCategoryCardProps {
   leaf: LeafCategory;

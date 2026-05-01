@@ -15,22 +15,25 @@ import ImageGallery from '../components/ImageGallery';
  * - Increments view count on load (Requirement 5.7)
  */
 const AdDetailsPage = () => {
-  const { id } = useParams<{ id: string }>();
+  const { id, adId } = useParams<{ id?: string; adId?: string }>();
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
+
+  // Support both old (/ads/:id) and new (/:parent/:sub/:leaf/:adId) URL formats
+  const actualAdId = adId || id;
 
   const { currentAd: ad, loading, error } = useAppSelector((state) => state.ads);
   const [showPhone, setShowPhone] = useState(false);
 
   useEffect(() => {
-    if (!id) return;
-    dispatch(fetchAdById(id));
-    dispatch(incrementAdView(id));
+    if (!actualAdId) return;
+    dispatch(fetchAdById(actualAdId));
+    dispatch(incrementAdView(actualAdId));
 
     return () => {
       dispatch(clearCurrentAd());
     };
-  }, [id, dispatch]);
+  }, [actualAdId, dispatch]);
 
   if (loading) return <PageSkeleton />;
 
