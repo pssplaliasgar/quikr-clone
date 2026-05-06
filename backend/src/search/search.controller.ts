@@ -1,8 +1,8 @@
 import { Controller, Get, Query } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
+import { SkipThrottle } from '@nestjs/throttler';
 import { SearchService } from './search.service';
 import { FindAdsDto } from '../ads/dto';
-import { Ad } from '../ads/entities/ad.entity';
 
 @ApiTags('search')
 @Controller('search')
@@ -20,6 +20,7 @@ export class SearchController {
   }
 
   @Get('autocomplete')
+  @SkipThrottle()
   @ApiOperation({ summary: 'Get autocomplete suggestions' })
   @ApiResponse({
     status: 200,
