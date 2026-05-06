@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation, useSearchParams } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '../store/hooks';
 import { logout } from '../store/slices/authSlice';
 import AuthModal from './AuthModal';
@@ -18,6 +18,11 @@ interface HeaderProps {
 const Header: React.FC<HeaderProps> = ({ onLocationClick, onSearchSubmit }) => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
+  const location = useLocation();
+  const [searchParams] = useSearchParams();
+
+  // Keep the header search bar in sync with the URL query on the search page
+  const headerQuery = location.pathname === '/search' ? (searchParams.get('q') ?? '') : '';
 
   const isAuthenticated = useAppSelector((state) => state.auth.isAuthenticated);
   const user = useAppSelector((state) => state.auth.user);
@@ -103,6 +108,7 @@ const Header: React.FC<HeaderProps> = ({ onLocationClick, onSearchSubmit }) => {
 
             {/* Search bar — grows to fill available space */}
             <SearchBar
+              initialQuery={headerQuery}
               onSearch={handleSearchSubmit}
               className="flex-1"
             />

@@ -141,13 +141,13 @@ export class SearchService {
     // Search for ads with matching titles (case-insensitive)
     const ads = await this.adRepository
       .createQueryBuilder('ad')
-      .select('DISTINCT ad.title')
+      .select('ad.title', 'title')
       .where('ad.isActive = :isActive', { isActive: true })
       .andWhere('LOWER(ad.title) LIKE LOWER(:term)', { term: `%${term}%` })
+      .distinct(true)
       .limit(10)
       .getRawMany();
 
-    // Extract unique titles
-    return ads.map((ad) => ad.ad_title);
+    return ads.map((ad) => ad.title);
   }
 }

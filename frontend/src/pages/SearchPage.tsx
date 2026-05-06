@@ -6,7 +6,6 @@ import type { FetchAdsParams } from '../store/slices/adsSlice';
 import AdCard from '../components/AdCard';
 import FilterPanel from '../components/FilterPanel';
 import Pagination from '../components/Pagination';
-import SearchBar from '../components/SearchBar';
 import type { FilterValues } from '../components/FilterPanel';
 
 type SortOption = 'newest' | 'oldest' | 'price_asc' | 'price_desc';
@@ -91,13 +90,6 @@ const SearchPage = () => {
     setFilters(EMPTY_FILTERS);
   }, [urlQuery]);
 
-  const handleNewSearch = (q: string) => {
-    setPage(1);
-    setSortBy('newest');
-    setFilters(EMPTY_FILTERS);
-    syncUrl(q, 1, 'newest');
-  };
-
   const handleApplyFilters = (newFilters: FilterValues) => {
     setFilters(newFilters);
     setPage(1);
@@ -128,15 +120,6 @@ const SearchPage = () => {
 
   return (
     <div className="max-w-7xl mx-auto px-4 py-6">
-      {/* Search bar — allows refining the query from the results page */}
-      <div className="mb-6">
-        <SearchBar
-          initialQuery={urlQuery}
-          onSearch={handleNewSearch}
-          className="max-w-2xl"
-        />
-      </div>
-
       {/* Breadcrumb */}
       <nav aria-label="Breadcrumb" className="mb-4">
         <ol className="flex flex-wrap items-center gap-1 text-sm text-gray-500">
